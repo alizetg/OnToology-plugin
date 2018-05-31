@@ -1,17 +1,23 @@
 package menu;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
-import java.awt.Button;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.api.errors.NoFilepatternException;
+import org.eclipse.jgit.api.errors.TransportException;
+
+
 import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -20,8 +26,18 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import java.awt.Font;
 
-public class WindowOnToology extends JFrame implements ActionListener {
 
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import org.glassfish.jersey.jackson.JacksonFeature;
+
+
+
+
+
+public class WindowOnToology extends JFrame implements ActionListener {
 
 
 	private JPanel contentPanel;
@@ -35,10 +51,9 @@ public class WindowOnToology extends JFrame implements ActionListener {
 	private JPasswordField txtPassword;
 	private JTextField txtLocalPath;
 	private JTextField txtRemotePath;
-	
-	private JPanel panel;
-
-	UserOnToology user = new UserOnToology();
+    UserOnToology user= new UserOnToology();
+	ConnectGitHub connection = new ConnectGitHub();
+	private boolean exit;
 
 	/**
 	 * Create the frame.
@@ -110,35 +125,64 @@ public class WindowOnToology extends JFrame implements ActionListener {
 		
 	}
 	
-	
-	/**
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnCancel) {
 			actionPerformedBtnCancel(e);
 		}
 		if (e.getSource() == btnSend) {
-			actionPerformedBtnSend(e);
+				try {
+					actionPerformedBtnSend(e);
+				} catch (JGitInternalException | IOException | GitAPIException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 		}
-	}**/
-	
-	
-	
-	
+	}
 	
 
-	protected UserOnToology actionPerformedBtnSend(ActionEvent e) {
-		
-		user.setUser(txtUser.getText());
-		user.setPassword(txtPassword.getPassword());
-		user.setLocalPath(txtLocalPath.getText());
-		user.setRemotePath(txtRemotePath.getText());
+	protected UserOnToology actionPerformedBtnSend(ActionEvent e) throws JGitInternalException, InvalidRemoteException, TransportException, IOException, GitAPIException {
+	  
+		user= new UserOnToology(txtUser.getText(),txtPassword.getPassword(), txtLocalPath.getText(),txtRemotePath.getText());
 		if(user.getUser().isEmpty() || user.getPassword().length==0 || user.getLocalPath().isEmpty() || user.getRemotePath().isEmpty()){
 			JOptionPane.showMessageDialog(null, "No ha introducido todos los datos, vuelva a intentarlo ", "Alerta", JOptionPane.WARNING_MESSAGE);
 			actionPerformedBtnCancel(e);
-		}
+		}	
 		
-		return user;
-		
+	    connection.connecRepo(user); 
+	    exit=connection.cloneRepo(user);
+		System.out.println("esta es exit" + exit);
+		if(!exit){
+			actionPerformedBtnCancel(e);
+		}else{
+		    try {
+				connection.addToRepo(user);
+			} catch (IOException | GitAPIException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "No ha introducido los datos del repositorio correctamente, vuelva a intentarlo ", "Alerta", JOptionPane.WARNING_MESSAGE);
+	
+			}
+		    try {
+				connection.commitToRepo(user,"modificacion-Rpo");
+			} catch (JGitInternalException | IOException | GitAPIException e1) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null, "No ha introducido los datos de acceso correctamente, vuelva a intentarlo ", "Alerta", JOptionPane.WARNING_MESSAGE);
+				e1.printStackTrace();
+			}
+	    
+		    
+		    try {
+				connection.pushToRepo(user);
+			} catch (JGitInternalException | IOException | GitAPIException e1) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null, "No ha introducido los datos de acceso correctamente, vuelva a intentarlo ", "Alerta", JOptionPane.WARNING_MESSAGE);
+				e1.printStackTrace();
+			}
+	   	
+		    
+		     
+		}    
+		   return user;
 	}
 	
 	

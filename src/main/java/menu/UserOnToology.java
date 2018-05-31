@@ -34,11 +34,15 @@ public class UserOnToology {
     //private CredentialsProvider cp;
     private String user;
     private char [] password;
+    private CredentialsProvider cp;
+    
+ 
 
+	public UserOnToology(){}
     
-    public UserOnToology(){}
-    
-    public UserOnToology(String user, String password, String localPath, String remotePath)  {
+    public UserOnToology(String user, char [] password, String localPath, String remotePath)  {
+    	this.user=user;
+    	this.password = password;
         this.localPath = localPath;
         this.remotePath = remotePath;
         try {
@@ -82,7 +86,7 @@ public class UserOnToology {
 		this.git = git;
 	}
 	
-	/*
+	
 
 	public CredentialsProvider getCp() {
 		return cp;
@@ -92,7 +96,7 @@ public class UserOnToology {
 		this.cp = cp;
 	}
 	
-	*/
+
 
 	public String getUser() {
 		return user;

@@ -2,6 +2,7 @@ package menu;
 
 
 import java.io.File;
+
 import java.io.IOException;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -40,32 +41,17 @@ import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 
+
 public class OnToology extends ProtegeOWLAction implements ActionListener {
-	
-	
 	
 	/**
 	 * 
 	 */
-	
 	private static final long serialVersionUID = 1L;
 	WindowOnToology view= new WindowOnToology();
 	UserOnToology user = new UserOnToology();
-	JFrame formulario = new JFrame();
-	JPanel panel = new JPanel();
-	
-	
+	ConnectGitHub connection = new ConnectGitHub();
 
-	public void initialise() throws Exception {
-    
-	}
-
-	
-
-	public void dispose() throws Exception {
-	}
-	
-	
 	public void actionPerformed(ActionEvent event) {
 		
 		//StringBuilder message = new StringBuilder("This example OnToooooology item iiiis under the Tools menu.\n");
@@ -73,45 +59,69 @@ public class OnToology extends ProtegeOWLAction implements ActionListener {
 		if (event.getActionCommand() == "btnCancel") {
 			view.actionPerformedBtnCancel(event);
 		}
+		 System.out.println("estoy aqui en OnToology");
 		if (event.getActionCommand()== "btnSend") {
-			user=(view.actionPerformedBtnSend(event));
-			System.out.print(user.getUser());
-			System.out.print(user.getPassword());
-			System.out.print(user.getLocalPath());
-			System.out.print(user.getRemotePath());
-		}
-	
+		    try {
+				user=view.actionPerformedBtnSend(event);
+			} catch (JGitInternalException | IOException | GitAPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    /*System.out.println("estoy aqui en OnToology"+ ""+ user.getUser());
+		    connection.connecRepo(user); 
+		    try {
+				connection.cloneRepo(user);
+			} catch (IOException | GitAPIException e2) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null, "El directorio en el que se desea clonar el repositorio ya existe y no esta vacio, intentelo de nuevo ", "Alerta", JOptionPane.WARNING_MESSAGE);
+				e2.printStackTrace();
+			}
+		    
+		    try {
+				connection.addToRepo(user);
+			} catch (IOException | GitAPIException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "No ha introducido los datos del repositorio correctamente, vuelva a intentarlo ", "Alerta", JOptionPane.WARNING_MESSAGE);
+
+			}
+		    try {
+				connection.commitToRepo(user,"modificacion-Rpo");
+			} catch (JGitInternalException | IOException | GitAPIException e1) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null, "No ha introducido los datos de acceso correctamente, vuelva a intentarlo ", "Alerta", JOptionPane.WARNING_MESSAGE);
+				e1.printStackTrace();
+			}
+		    
+		    
+		    try {
+				connection.pushToRepo(user);
+			} catch (JGitInternalException | IOException | GitAPIException e) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(null, "No ha introducido los datos de acceso correctamente, vuelva a intentarlo ", "Alerta", JOptionPane.WARNING_MESSAGE);
+				e.printStackTrace();
+			}
+		    
+		    
+		    
+		    
+				*/
+		}	
+	}
+
+
+
+	@Override
+	public void initialise() throws Exception {
+		// TODO Auto-generated method stub
 		
-		/*
-		message.append("The currently selected class is ");
-		message.append(getOWLWorkspace().getOWLSelectionModel().getLastSelectedClass());
-		message.append(".");
-		JOptionPane.showMessageDialog(getOWLWorkspace(), message.toString());
-		
-		*
-		*
-		*
-		*
-		***
-		 * Launch the application.
-		 
-		public static void main(String[] args) {
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						WindowOnToology frame = new WindowOnToology();
-						frame.setVisible(true);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-			*
-			*/
-			
-		
-		
+	}
+
+
+
+	@Override
+	public void dispose() throws Exception {
+		// TODO Auto-generated method stub
 		
 	}
 
